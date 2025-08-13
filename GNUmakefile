@@ -1,6 +1,6 @@
 TEST?=$$(go list ./... |grep -v 'vendor')
 GOFMT_FILES?=$$(find . -name '*.go' |grep -v vendor)
-TARGETS=darwin linux windows
+TARGETS=darwin_amd64 linux_amd64 windows_amd64 darwin_arm64 linux_arm64
 WEBSITE_REPO=github.com/hashicorp/terraform-website
 PKG_NAME=circleci
 
@@ -12,8 +12,11 @@ build: fmtcheck
 targets: $(TARGETS)
 
 $(TARGETS):
-	GOOS=$@ GOARCH=amd64 CGO_ENABLED=0 go build -o "dist/terraform-provider-circleci_$$(git describe --tags)_$@_amd64"
-	zip -j dist/terraform-provider-circleci_$$(git describe --tags)_$@_amd64.zip dist/terraform-provider-circleci_$$(git describe --tags)_$@_amd64
+	@os=$$(echo $@ | cut -d'_' -f1); \
+	arch=$$(echo $@ | cut -d'_' -f2); \
+	output="dist/terraform-provider-$(PKG_NAME)_$$(git describe --tags)_$${os}_$${arch}"; \
+	GOOS=$$os GOARCH=$$arch CGO_ENABLED=0 go build -o "$$output"; \
+	zip -j "$${output}.zip" "$$output"
 
 test: fmtcheck
 	go test -i $(TEST) || exit 1
