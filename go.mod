@@ -1,8 +1,9 @@
-module github.com/edahlseng/terraform-provider-circleci
+module github.com/shapertools/terraform-provider-circleci
 
 go 1.12
 
 require (
 	github.com/dghubble/sling v1.2.0
-	github.com/hashicorp/terraform v0.11.13
+	github.com/edahlseng/terraform-provider-circleci v0.3.0
+	github.com/hashicorp/terraform v0.12.9
 )
